@@ -20,20 +20,33 @@
   </script>
   <style>
     * { box-sizing: border-box; }
-    html { background: #f5f1eb; }
+    html { height: 100%; margin: 0; background: #f5f1eb; -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
+      min-height: 100%;
       min-height: 100vh;
       min-height: -webkit-fill-available;
-      background: #f5f1eb;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       color: #2c2825;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f5f1eb;
+      z-index: -1;
+    }
       font-family: -apple-system, BlinkMacSystemFont, "Noto Sans SC", sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      box-sizing: border-box;
     }
     h1 { font-size: 1.5rem; font-weight: 400; margin: 0 0 2rem 0; }
     .cards { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
