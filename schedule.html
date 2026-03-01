@@ -426,7 +426,7 @@
         const label = btn.textContent;
         btn.disabled = true;
         btn.textContent = '同步中…';
-        fetch('../entries.csv?t=' + Date.now())
+        fetch('entries.csv?t=' + Date.now())
           .then(function(r) { return r.ok ? r.text() : Promise.reject(new Error(r.status)); })
           .then(parseCSVFromText)
           .then(function(entries) {
