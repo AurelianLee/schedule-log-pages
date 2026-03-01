@@ -144,7 +144,7 @@
   </style>
   <script>
     window.SCHEDULE_LOG_AUTH_HASH='';
-    window.SCHEDULE_LOG_GOOGLE_CLIENT_ID='https://79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleusercontent.com';
+    window.SCHEDULE_LOG_GOOGLE_CLIENT_ID='79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleuser…';
     window.SCHEDULE_LOG_ALLOWED_GOOGLE_EMAILS=["liwangqi2023@gmail.com"];
   </script>
 </head>
@@ -166,7 +166,7 @@
     var GID=window.SCHEDULE_LOG_GOOGLE_CLIENT_ID;
     var ALLOWED=window.SCHEDULE_LOG_ALLOWED_GOOGLE_EMAILS;
     var hasPw=H&&H!==''&&H!=='';
-    var hasGoogle=GID&&GID!=='https://79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleusercontent.com'&&Array.isArray(ALLOWED)&&ALLOWED.length>0;
+    var hasGoogle=GID&&GID!=='79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleuser…'&&Array.isArray(ALLOWED)&&ALLOWED.length>0;
     if((!hasPw&&!hasGoogle)||sessionStorage.getItem('schedule_log_auth'))return;
     var gate=document.getElementById('schedule-log-auth-gate');
     gate.style.display='flex';
