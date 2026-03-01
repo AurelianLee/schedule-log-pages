@@ -10,7 +10,11 @@
   <title>日程日志</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <script>window.SCHEDULE_LOG_AUTH_HASH='';</script>
+  <script>
+    window.SCHEDULE_LOG_AUTH_HASH='';
+    window.SCHEDULE_LOG_GOOGLE_CLIENT_ID='https://79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleusercontent.com';
+    window.SCHEDULE_LOG_ALLOWED_GOOGLE_EMAILS=["liwangqi2023@gmail.com"];
+  </script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -52,26 +56,51 @@
       <button type="submit" style="padding:0.6rem;background:#c17f59;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">登录</button>
       <p class="auth-msg" style="display:none;margin:0;color:#c17f59;font-size:0.9rem;"></p>
     </form>
+    <div id="schedule-log-google-one" style="margin-top:1rem;min-height:44px;"></div>
   </div>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
   (function(){
     var H=window.SCHEDULE_LOG_AUTH_HASH;
-    if(!H||H===''||H==='')return;
-    if(sessionStorage.getItem('schedule_log_auth'))return;
+    var GID=window.SCHEDULE_LOG_GOOGLE_CLIENT_ID;
+    var ALLOWED=window.SCHEDULE_LOG_ALLOWED_GOOGLE_EMAILS;
+    var hasPw=H&&H!==''&&H!=='';
+    var hasGoogle=GID&&GID!=='https://79760615124-j42srs69sspjsgl6d73jv41t5s10iabo.apps.googleusercontent.com'&&Array.isArray(ALLOWED)&&ALLOWED.length>0;
+    if((!hasPw&&!hasGoogle)||sessionStorage.getItem('schedule_log_auth'))return;
     var gate=document.getElementById('schedule-log-auth-gate');
     gate.style.display='flex';
     document.body.style.overflow='hidden';
-    gate.querySelector('form').onsubmit=async function(e){
-      e.preventDefault();
-      var u=gate.querySelector('[name=user]').value.trim();
-      var p=gate.querySelector('[name=pass]').value;
-      var msg=gate.querySelector('.auth-msg');
-      var buf=new TextEncoder().encode(u+':'+p);
-      var digest=await crypto.subtle.digest('SHA-256',buf);
-      var hex=Array.from(new Uint8Array(digest)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
-      if(hex===H){sessionStorage.setItem('schedule_log_auth','1');location.reload();}
-      else{msg.textContent='账号或密码错误';msg.style.display='block';}
-    };
+    if(hasPw){
+      gate.querySelector('form').style.display='flex';
+      gate.querySelector('form').onsubmit=async function(e){
+        e.preventDefault();
+        var u=gate.querySelector('[name=user]').value.trim();
+        var p=gate.querySelector('[name=pass]').value;
+        var msg=gate.querySelector('.auth-msg');
+        var buf=new TextEncoder().encode(u+':'+p);
+        var digest=await crypto.subtle.digest('SHA-256',buf);
+        var hex=Array.from(new Uint8Array(digest)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+        if(hex===H){sessionStorage.setItem('schedule_log_auth','1');location.reload();}
+        else{msg.textContent='账号或密码错误';msg.style.display='block';}
+      };
+    }else gate.querySelector('form').style.display='none';
+    if(hasGoogle){
+      function onGoogleCredential(response){
+        try{
+          var payload=JSON.parse(atob(response.credential.split('.')[1]));
+          var email=(payload.email||'').toLowerCase();
+          if(ALLOWED.indexOf(email)!==-1){sessionStorage.setItem('schedule_log_auth','1');location.reload();}
+          else{var msg=gate.querySelector('.auth-msg');msg.textContent='该 Google 账号未授权';msg.style.display='block';}
+        }catch(e){gate.querySelector('.auth-msg').textContent='登录失败';gate.querySelector('.auth-msg').style.display='block';}
+      }
+      function renderGoogleBtn(){
+        if(typeof google!=='undefined'&&google.accounts&&google.accounts.id){
+          google.accounts.id.initialize({client_id:GID,callback:onGoogleCredential});
+          google.accounts.id.renderButton(document.getElementById('schedule-log-google-one'),{theme:'outline',size:'large',width:280,type:'standard'});
+        }else setTimeout(renderGoogleBtn,100);
+      }
+      renderGoogleBtn();
+    }
   })();
   </script>
   <script>
