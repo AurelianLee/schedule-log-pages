@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#c17f59" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f1eb" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="https://AurelianLee.github.io/schedule-log-pages/manifest.json" />
   <link rel="icon" href="https://AurelianLee.github.io/schedule-log-pages/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" sizes="180x180" href="https://AurelianLee.github.io/schedule-log-pages/apple-touch-icon-180.png" />
@@ -25,14 +26,17 @@
       --grid-hour: #f0ebe3;
     }
     * { box-sizing: border-box; }
+    html { background: var(--bg); }
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       background: var(--bg);
       color: var(--text);
       font-family: 'Noto Sans SC', system-ui, sans-serif;
       font-size: 14px;
       line-height: 1.5;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
     h1 {
@@ -176,7 +180,7 @@
     }
     .month-view td { min-height: 2em; }
     .month-view td.filled { background: #fff; }
-    .month-view .activity { white-space: pre-wrap; word-break: break-word; }
+    .month-view .activity { white-space: pre-wrap; word-break: break-word; max-height: 5.5em; overflow-y: auto; }
     .month-view .activity-item { display: block; margin-bottom: 0.25em; padding-bottom: 0.25em; border-bottom: 1px solid var(--grid-hour); font-size: 0.85em; }
     .month-view .activity-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
     .month-view td.cell-has-content { cursor: pointer; -webkit-tap-highlight-color: var(--accent-soft); }
@@ -314,7 +318,8 @@
         var overlay = getOverlay(dateStr, hour);
         var detail = overlay && overlay.detail !== undefined ? overlay.detail : (activities && activities.length ? activities.join('\n') : '');
         var summary = overlay && overlay.summary !== undefined ? overlay.summary : (activities && activities.length ? truncateSummary(activities[0], SUMMARY_MAX_LEN) : '');
-        return { summary: summary.slice(0, SUMMARY_MAX_LEN), detail: detail };
+        var displayText = (detail || '').trim();
+        return { summary: summary.slice(0, SUMMARY_MAX_LEN), detail: detail, displayText: displayText };
       }
 
       function byDate(a, b) { return a.date.localeCompare(b.date); }
@@ -466,10 +471,9 @@
               const key = dateStr + '_' + hour;
               const arr = weekData[key];
               const content = getCellContent(dateStr, hour, arr);
-              const hasContent = content.summary || content.detail;
+              const hasContent = content.displayText || content.detail;
               const cls = hasContent ? 'filled cell-has-content' : '';
-              const summaryText = content.summary ? content.summary.slice(0, SUMMARY_MAX_LEN) : '';
-              const inner = summaryText ? '<span class="activity-item">' + escapeHtml(summaryText) + '</span>' : '';
+              const inner = content.displayText ? '<span class="activity-item">' + escapeHtml(content.displayText) + '</span>' : '';
               tbl += '<td class="' + cls + '" data-date="' + dateStr + '" data-hour="' + hour + '"><div class="activity">' + inner + '</div></td>';
             }
             tbl += '</tr>';
