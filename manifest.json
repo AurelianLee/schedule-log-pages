@@ -1,0 +1,19 @@
+{
+  "name": "日程日志",
+  "short_name": "日程",
+  "description": "填写与查看当日日程",
+  "start_url": "schedule_edit.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#c17f59",
+  "background_color": "#f5f1eb",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

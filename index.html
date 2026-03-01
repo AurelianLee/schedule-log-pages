@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#c17f59" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="日程" />
+  <title>日程日志</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <script>window.SCHEDULE_LOG_AUTH_HASH='';</script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f5f1eb;
+      color: #2c2825;
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans SC", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.5rem; font-weight: 400; margin: 0 0 2rem 0; }
+    .cards { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
+    a {
+      display: block;
+      padding: 1.25rem 1.5rem;
+      background: #fffef9;
+      border: 1px solid #e5e0d8;
+      border-radius: 12px;
+      color: #2c2825;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background .15s, border-color .15s;
+    }
+    a:hover, a:focus { background: #e8d5cc; border-color: #c17f59; }
+    a.primary { background: #c17f59; color: #fff; border-color: #c17f59; }
+    a.primary:hover, a.primary:focus { background: #a86a47; border-color: #a86a47; }
+  </style>
+</head>
+<body>
+  <div id="schedule-log-auth-gate" style="display:none;position:fixed;inset:0;background:#f5f1eb;z-index:9999;align-items:center;justify-content:center;flex-direction:column;padding:2rem;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans SC',sans-serif;">
+    <h2 style="margin:0 0 1.5rem 0;font-size:1.25rem;font-weight:500;color:#2c2825;">日程日志 · 登录</h2>
+    <form id="schedule-log-auth-form" style="display:flex;flex-direction:column;gap:0.75rem;width:100%;max-width:280px;">
+      <input type="text" name="user" placeholder="账号" autocomplete="username" style="padding:0.6rem 0.75rem;border:1px solid #e5e0d8;border-radius:8px;font-size:1rem;" />
+      <input type="password" name="pass" placeholder="密码" autocomplete="current-password" style="padding:0.6rem 0.75rem;border:1px solid #e5e0d8;border-radius:8px;font-size:1rem;" />
+      <button type="submit" style="padding:0.6rem;background:#c17f59;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">登录</button>
+      <p class="auth-msg" style="display:none;margin:0;color:#c17f59;font-size:0.9rem;"></p>
+    </form>
+  </div>
+  <script>
+  (function(){
+    var H=window.SCHEDULE_LOG_AUTH_HASH;
+    if(!H||H===''||H==='')return;
+    if(sessionStorage.getItem('schedule_log_auth'))return;
+    var gate=document.getElementById('schedule-log-auth-gate');
+    gate.style.display='flex';
+    document.body.style.overflow='hidden';
+    gate.querySelector('form').onsubmit=async function(e){
+      e.preventDefault();
+      var u=gate.querySelector('[name=user]').value.trim();
+      var p=gate.querySelector('[name=pass]').value;
+      var msg=gate.querySelector('.auth-msg');
+      var buf=new TextEncoder().encode(u+':'+p);
+      var digest=await crypto.subtle.digest('SHA-256',buf);
+      var hex=Array.from(new Uint8Array(digest)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+      if(hex===H){sessionStorage.setItem('schedule_log_auth','1');location.reload();}
+      else{msg.textContent='账号或密码错误';msg.style.display='block';}
+    };
+  })();
+  </script>
+  <script>
+    (function() {
+      if (document.getElementById('schedule-log-auth-gate').style.display === 'flex') return;
+      if (window.location.search.indexOf('choose') !== -1) return;
+      if (window.innerWidth >= 1024) { window.location.replace('schedule.html'); }
+      else { window.location.replace('schedule_edit.html'); }
+    })();
+  </script>
+  <h1>日程日志</h1>
+  <div class="cards">
+    <a href="schedule_edit.html" class="primary">填写今日</a>
+    <a href="schedule.html">查看总览</a>
+  </div>
+</body>
+</html>
