@@ -1,6 +1,6 @@
 // 轻量 service worker：缓存编辑页与总览，支持离线打开
-const CACHE = 'schedule-log-v1';
-const ASSETS = ['index.html', 'schedule_edit.html', 'schedule.html', 'manifest.json', 'icon.svg'];
+const CACHE = 'schedule-log-v2';
+const ASSETS = ['index.html', 'schedule_edit.html', 'schedule.html', 'manifest.json', 'icon.svg', 'apple-touch-icon.png', 'apple-touch-icon-180.png', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -10,7 +10,8 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const u = e.request.url;
-if (u.includes('schedule_edit') || u.includes('schedule.html') || u.includes('index.html') || u.includes('manifest') || u.includes('icon.svg')) {
+  const isAsset = u.includes('schedule_edit') || u.includes('schedule.html') || u.includes('index.html') || u.includes('manifest') || u.includes('icon.svg') || u.includes('apple-touch-icon') || u.includes('icon-192') || u.includes('icon-512');
+  if (isAsset) {
     e.respondWith(
       caches.match(e.request).then((r) => r || fetch(e.request).then((res) => {
         const clone = res.clone();

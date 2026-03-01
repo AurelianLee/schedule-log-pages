@@ -8,9 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="日程" />
   <title>日程日志</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="https://AurelianLee.github.io/schedule-log-pages/manifest.json" />
+  <link rel="icon" href="https://AurelianLee.github.io/schedule-log-pages/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" sizes="180x180" href="https://AurelianLee.github.io/schedule-log-pages/apple-touch-icon-180.png" />
+  <link rel="apple-touch-icon" href="https://AurelianLee.github.io/schedule-log-pages/apple-touch-icon.png" />
   <script>
     window.SCHEDULE_LOG_AUTH_HASH='';
     window.SCHEDULE_LOG_GOOGLE_CLIENT_ID='';
@@ -108,8 +109,9 @@
     (function() {
       if (document.getElementById('schedule-log-auth-gate').style.display === 'flex') return;
       if (window.location.search.indexOf('choose') !== -1) return;
-      if (window.innerWidth >= 1024) { window.location.replace('schedule.html'); }
-      else { window.location.replace('schedule_edit.html'); }
+      var isMobile = 'ontouchstart' in window || window.innerWidth < 1280;
+      if (isMobile) { window.location.replace('schedule_edit.html'); }
+      else { window.location.replace('schedule.html'); }
     })();
   </script>
   <h1>日程日志</h1>
